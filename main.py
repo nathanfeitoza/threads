@@ -48,25 +48,86 @@ def aviao(id, acao):
         #time.sleep(0.3)
 
 
-class Aeroporto():
+class Aviao():
     def __init__(self):
+        self.__decolou = 0
+        self.__pousou = 0
         self.__decolando = 0
         self.___pousando = 0
-        self.__esperando_pousar = 0
-        self.__esperando_decolar = 0
+        self.__esperando_pousar = []
+        self.__esperando_decolar = []
+        self.__excedente_pousar = []
+        self.__excedente_decolar = []
 
     def decolar(self, aviao):
+        print('Decolaram: ',self.__decolou)
         if(self.__decolando == 0 and self.___pousando == 0):
-            print('decolar Ok')
+            self.__decolando = 1
+            print('decolagem Ok. Aviao: ', aviao)
+            self.__decolou += 1
+            time.sleep(5)
+            if(aviao in self.__esperando_decolar):
+                self.__esperando_decolar.remove(aviao)
+            self.__decolando = 0
+        else:
+            print('\n\n -- Lista esperando decolar: ',self.__esperando_decolar)
+
+            if len(self.__esperando_decolar) <= 5 and (aviao in self.__esperando_decolar) == False:
+                self.__esperando_decolar.append(aviao)
+
+            if len(self.__esperando_decolar) >= 6 and (aviao in self.__excedente_decolar) == False:
+                print('\n -- Excendente de decolagem --. Aviao: ', aviao,'\n')
+                self.__excedente_decolar.append(aviao)
+            if len(self.__esperando_decolar) == 0 and len(self.__excedente_decolar) != 0:
+                self.__esperando_decolar = self.__excedente_decolar[:6]
+                self.__excedente_decolar = self.__excedente_decolar[6:]
+
+            print('Aguardando decolar. Aviao: ', aviao)
+            time.sleep(2)
+            self.decolar(aviao)
 
     def pousar(self, aviao):
-        if(self.__decolando == 0 and self.)
+        print('Pousaram: ', self.__pousou)
+        if(self.__decolando == 0 and self.___pousando == 0):
+            self.___pousando = 1
+            print('pouso ok. Aviao: ',aviao)
+            self.__pousou += 1
+            time.sleep(5)
+            if (aviao in self.__esperando_pousar):
+                self.__esperando_pousar.remove(aviao)
+            self.___pousando = 0
+        else:
+            print('\n\n -- Lista esperando pousar: ',self.__esperando_pousar)
 
-aeroporto = Aeroporto()
+            if len(self.__esperando_pousar) <= 2 and (aviao in self.__esperando_pousar) == False:
+                self.__esperando_pousar.append(aviao)
 
-aviao1 = Thread(target=aeroporto.decolar,args=["decolar"])
-#aviao2 = Thread(target=aviao,args=[2,"pousar"])
+            if len(self.__esperando_pousar) >= 3 and (aviao in self.__excedente_pousar) == False:
+                print('\n -- Excendente de pouso --. Aviao: ', aviao,'\n')
+                self.__excedente_pousar.append(aviao)
+            if len(self.__esperando_pousar) == 0 and len(self.__excedente_pousar) != 0:
+                self.__esperando_pousar = self.__excedente_pousar[:3]
+                self.__excedente_pousar = self.__excedente_pousar[3:]
+
+            print('Aguardando pousar. Aviao: ', aviao)
+            time.sleep(2)
+            self.pousar(aviao)
+
+pista = Aviao()
+
+for i in range(10):
+    aviao_id = i + 1
+    aviaoD = Thread(target=pista.decolar, args=[aviao_id])
+    aviaoD.start()
+
+for i in range(10):
+    aviao_id = i + 1
+    aviaoP = Thread(target=pista.pousar, args=[aviao_id])
+    aviaoP.start()
+
+#aviao1 = Thread(target=pista.decolar,args=[1])
+#aviao2 = Thread(target=pista.pousar,args=[2])
 
 
-aviao1.start()
+#aviao1.start()
 #aviao2.start()
